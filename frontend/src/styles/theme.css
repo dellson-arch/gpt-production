@@ -9,6 +9,7 @@
   --accent-color: #06b6d4;
   --accent-color-rgb: 6, 182, 212;
   --accent-light: #22d3ee;
+  --accent-hover: #0891b2;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
@@ -25,6 +26,7 @@
   --bg-secondary-rgb: 17, 17, 17;
   --bg-tertiary: #1a1a1a;
   --bg-tertiary-rgb: 26, 26, 26;
+  --bg-quaternary: #2a2a2a;
   --bg-elevated: #1f1f1f;
   --bg-card: #1a1a1a;
   --bg-input: #1f1f1f;

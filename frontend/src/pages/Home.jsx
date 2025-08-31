@@ -1,19 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useChat } from '../context/ChatContext';
 import ChatSidebar from '../components/ChatSidebar';
 import ChatMessage from '../components/ChatMessage';
 import ChatInput from '../components/ChatInput';
+import NewChatPrompt from '../components/NewChatPrompt';
 import '../styles/chat.css';
 
 const Home = () => {
   const { theme } = useTheme();
-  const [messages, setMessages] = useState([]);
+  const {
+    chats,
+    currentChatId,
+    currentMessages,
+    showNewChatPrompt,
+    setShowNewChatPrompt,
+    createNewChat,
+    addMessageToCurrentChat,
+    selectChat
+  } = useChat();
+  
   const [inputValue, setInputValue] = useState('');
-  const [previousChats, setPreviousChats] = useState([
-    { id: 1, title: 'Explain quantum computing', timestamp: '2024-01-15' },
-    { id: 2, title: 'Creative birthday ideas', timestamp: '2024-01-14' },
-    { id: 3, title: 'JavaScript HTTP requests', timestamp: '2024-01-13' }
-  ]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const messagesContainerRef = useRef(null);
@@ -26,19 +33,33 @@ const Home = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [currentMessages]);
 
   const handleSendMessage = async (message) => {
     if (!message.trim()) return;
 
+    // If no current chat, create one
+    if (!currentChatId) {
+      createNewChat('');
+      // Wait for the chat to be created
+      setTimeout(() => {
+        sendMessageToChat(message);
+      }, 0);
+      return;
+    }
+
+    sendMessageToChat(message);
+  };
+
+  const sendMessageToChat = async (message) => {
     const userMessage = {
       id: Date.now(),
       content: message,
       sender: 'user',
-      timestamp: new Date().toLocaleTimeString()
+      timestamp: new Date().toISOString()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    addMessageToCurrentChat(userMessage);
     setInputValue('');
     setIsLoading(true);
 
@@ -48,21 +69,33 @@ const Home = () => {
         id: Date.now() + 1,
         content: `This is a simulated AI response to: "${message}". In a real application, this would be connected to your AI service.`,
         sender: 'ai',
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toISOString()
       };
-      setMessages(prev => [...prev, aiMessage]);
+      addMessageToCurrentChat(aiMessage);
       setIsLoading(false);
     }, 1500);
   };
 
   const handleNewChat = () => {
-    setMessages([]);
+    setShowNewChatPrompt(true);
+  };
+
+  const handleCreateNewChat = (prompt) => {
+    if (prompt) {
+      // If prompt is provided, create chat and send the prompt as first message
+      createNewChat(prompt);
+      setTimeout(() => {
+        sendMessageToChat(prompt);
+      }, 0);
+    } else {
+      // Create empty chat
+      createNewChat('');
+    }
     setIsSidebarOpen(false);
   };
 
   const handleChatSelect = (chatId) => {
-    // In a real app, you'd load the selected chat
-    console.log('Selected chat:', chatId);
+    selectChat(chatId);
     setIsSidebarOpen(false);
   };
 
@@ -79,7 +112,7 @@ const Home = () => {
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -91,7 +124,7 @@ const Home = () => {
           onClick={handleNewChat}
           aria-label="New chat"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
@@ -102,14 +135,15 @@ const Home = () => {
       <ChatSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        previousChats={previousChats}
+        previousChats={chats}
         onNewChat={handleNewChat}
         onChatSelect={handleChatSelect}
+        currentChatId={currentChatId}
       />
 
       {/* Main Chat Area */}
       <main className="chat-main">
-        {messages.length === 0 ? (
+        {currentMessages.length === 0 ? (
           <div className="welcome-screen">
             <h1 className="welcome-title">ChatGPT</h1>
             <div className="welcome-grid">
@@ -144,7 +178,7 @@ const Home = () => {
           </div>
         ) : (
           <div className="messages-container" ref={messagesContainerRef}>
-            {messages.map((message) => (
+            {currentMessages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
             {isLoading && (
@@ -175,6 +209,13 @@ const Home = () => {
       {isSidebarOpen && (
         <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />
       )}
+
+      {/* New Chat Prompt Modal */}
+      <NewChatPrompt
+        isOpen={showNewChatPrompt}
+        onClose={() => setShowNewChatPrompt(false)}
+        onCreateChat={handleCreateNewChat}
+      />
     </div>
   );
 };

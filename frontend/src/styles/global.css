@@ -13,6 +13,8 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
 }
 
 body {
@@ -26,6 +28,58 @@ body {
   text-rendering: optimizeLegibility;
   min-height: 100vh;
   overflow-x: hidden;
+  /* Prevent zoom on input focus on iOS */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 767px) {
+  html {
+    font-size: 14px; /* Slightly smaller base font for mobile */
+  }
+  
+  body {
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior: none;
+    /* Improve touch scrolling */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Improve tap targets on mobile */
+  button, 
+  input, 
+  textarea, 
+  select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent text selection on interactive elements */
+  button, 
+  input, 
+  textarea, 
+  select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in content areas */
+  .message-text,
+  .welcome-column li,
+  p,
+  h1, h2, h3, h4, h5, h6 {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
 }
 
 /* Typography - Professional and Modern */

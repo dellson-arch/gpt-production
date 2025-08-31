@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 
-const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect }) => {
+const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, currentChatId }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -26,7 +26,7 @@ const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect }
                 {previousChats.map((chat) => (
                   <button
                     key={chat.id}
-                    className="chat-item"
+                    className={`chat-item ${currentChatId === chat.id ? 'active' : ''}`}
                     onClick={() => onChatSelect(chat.id)}
                   >
                     <span className="chat-title">{chat.title}</span>
@@ -100,7 +100,7 @@ const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect }
                 {previousChats.map((chat) => (
                   <button
                     key={chat.id}
-                    className="chat-item"
+                    className={`chat-item ${currentChatId === chat.id ? 'active' : ''}`}
                     onClick={() => onChatSelect(chat.id)}
                   >
                     <span className="chat-title">{chat.title}</span>
