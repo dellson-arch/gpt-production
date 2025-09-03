@@ -71,6 +71,74 @@
   background-color: var(--bg-tertiary);
 }
 
+/* Connection Status Indicator */
+.connection-status-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 var(--spacing-sm);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+  transition: background-color var(--transition-fast);
+}
+
+.status-indicator.connected .status-dot {
+  background-color: var(--success-color, #10b981);
+}
+
+.status-indicator.error .status-dot {
+  background-color: var(--error-color, #ef4444);
+}
+
+.status-indicator.disconnected .status-dot {
+  background-color: var(--text-muted);
+}
+
+.status-indicator.connecting .status-dot {
+  background-color: var(--warning-color, #f59e0b);
+  animation: pulse 2s infinite;
+}
+
+.reconnect-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  margin-left: var(--spacing-xs);
+  transition: all var(--transition-fast);
+}
+
+.reconnect-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* Sidebar - Mobile First */
 .chat-sidebar {
   position: fixed;
@@ -180,6 +248,73 @@
 
 .chat-item:hover {
   background-color: var(--bg-tertiary);
+}
+
+.chat-item-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  position: relative;
+  margin-bottom: var(--spacing-xs);
+}
+
+.chat-item-container .chat-item {
+  flex: 1;
+  margin-right: var(--spacing-xs);
+}
+
+.delete-chat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--error-color);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  opacity: 0.8;
+  min-width: 32px;
+  min-height: 32px;
+  flex-shrink: 0;
+}
+
+.chat-item-container:hover .delete-chat-btn {
+  opacity: 1;
+}
+
+/* Temporary: Make delete button always visible for debugging */
+.delete-chat-btn {
+  opacity: 1 !important;
+  animation: pulse 2s infinite;
+  background: #ff0000 !important;
+  border: 3px solid #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px #ff0000 !important;
+  z-index: 1000 !important;
+  position: relative !important;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.delete-chat-btn:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--error-color);
+  transform: scale(1.1);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.delete-chat-btn:active {
+  transform: scale(0.95);
 }
 
 .chat-title {
@@ -358,6 +493,27 @@
   color: var(--text-muted);
 }
 
+/* Code formatting in messages */
+.code-line {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background-color: var(--bg-tertiary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  margin: var(--spacing-xs) 0;
+  border-left: 3px solid var(--primary-color);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.inline-code {
+  font-family: 'Monaco', 'Monaco', 'Ubuntu Mono', monospace;
+  background-color: var(--bg-tertiary);
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+
 .user-message {
   flex-direction: row-reverse;
 }
@@ -369,6 +525,20 @@
 .user-message .message-avatar {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
+}
+
+/* Error message styling */
+.error-message .message-avatar {
+  background-color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.error-message .message-content {
+  border-left: 3px solid var(--error-color);
+}
+
+.error-message .message-text {
+  color: var(--text-error);
 }
 
 /* Typing Indicator */
@@ -901,6 +1071,19 @@
   
   .chat-item {
     padding: var(--spacing-sm);
+  }
+  
+  .chat-item-container {
+    gap: var(--spacing-xs);
+  }
+  
+  .delete-chat-btn {
+    min-width: 32px;
+    min-height: 32px;
+    padding: var(--spacing-xs);
+    opacity: 1; /* Always visible on mobile */
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
   }
   
   .chat-title {

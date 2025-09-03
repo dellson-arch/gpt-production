@@ -46,7 +46,7 @@ async function generateResponse(content) {
 `
     }
   });
-  return response.text; ;
+  return response.text;
 }
 
 async function generateVector(content){

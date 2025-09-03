@@ -1,15 +1,24 @@
-import Approutes from './Approutes'
-import { ThemeProvider } from './context/ThemeContext'
-import { ChatProvider } from './context/ChatContext'
+import { useEffect } from 'react';
+import { useAppDispatch } from './store/hooks';
+import { initializeThemeListener } from './store/slices/themeSlice';
+import Approutes from './Approutes';
 
 const App = () => {
-  return (
-    <ThemeProvider>
-      <ChatProvider>
-        <Approutes/>
-      </ChatProvider>
-    </ThemeProvider>
-  )
-}
+  const dispatch = useAppDispatch();
 
-export default App
+  useEffect(() => {
+    // Initialize theme listener
+    const cleanup = dispatch(initializeThemeListener());
+    
+    // Cleanup function
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [dispatch]);
+
+  return (
+    <Approutes/>
+  );
+};
+
+export default App;

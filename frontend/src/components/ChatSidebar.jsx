@@ -1,8 +1,16 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { selectTheme } from '../store/slices/themeSlice';
+import { toggleTheme } from '../store/slices/themeSlice';
+import '../styles/chat.css';
 
-const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, currentChatId }) => {
-  const { theme, toggleTheme } = useTheme();
+const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, onDeleteChat, currentChatId }) => {
+  const dispatch = useAppDispatch();
+  const theme = useAppSelector(selectTheme);
+
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
+  };
 
   return (
     <>
@@ -23,15 +31,32 @@ const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, 
             <h3 className="history-title">Previous chats</h3>
             {previousChats.length > 0 ? (
               <div className="chat-list">
-                {previousChats.map((chat) => (
-                  <button
-                    key={chat.id}
-                    className={`chat-item ${currentChatId === chat.id ? 'active' : ''}`}
-                    onClick={() => onChatSelect(chat.id)}
+                {previousChats.map((chat, index) => (
+                  <div
+                    key={chat._id || chat.id || `chat-${index}`}
+                    className={`chat-item-container ${currentChatId === (chat._id || chat.id) ? 'active' : ''}`}
                   >
-                    <span className="chat-title">{chat.title}</span>
-                    <span className="chat-timestamp">{chat.timestamp}</span>
-                  </button>
+                    <button
+                      className={`chat-item ${currentChatId === (chat._id || chat.id) ? 'active' : ''}`}
+                      onClick={() => onChatSelect(chat._id || chat.id)}
+                    >
+                      <span className="chat-title">{chat.title}</span>
+                      <span className="chat-timestamp">{chat.timestamp}</span>
+                    </button>
+                    <button
+                      className="delete-chat-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteChat(chat._id || chat.id);
+                      }}
+                      title="Delete chat"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -41,7 +66,7 @@ const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, 
         </div>
 
         <div className="sidebar-footer">
-          <button className="sidebar-btn" onClick={toggleTheme}>
+          <button className="sidebar-btn" onClick={handleToggleTheme}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {theme === 'dark' ? (
                 <circle cx="12" cy="12" r="5"></circle>
@@ -97,15 +122,32 @@ const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, 
             <h3 className="history-title">Previous chats</h3>
             {previousChats.length > 0 ? (
               <div className="chat-list">
-                {previousChats.map((chat) => (
-                  <button
-                    key={chat.id}
-                    className={`chat-item ${currentChatId === chat.id ? 'active' : ''}`}
-                    onClick={() => onChatSelect(chat.id)}
+                {previousChats.map((chat, index) => (
+                  <div
+                    key={chat._id || chat.id || `chat-${index}`}
+                    className={`chat-item-container ${currentChatId === (chat._id || chat.id) ? 'active' : ''}`}
                   >
-                    <span className="chat-title">{chat.title}</span>
-                    <span className="chat-timestamp">{chat.timestamp}</span>
-                  </button>
+                    <button
+                      className={`chat-item ${currentChatId === (chat._id || chat.id) ? 'active' : ''}`}
+                      onClick={() => onChatSelect(chat._id || chat.id)}
+                    >
+                      <span className="chat-title">{chat.title}</span>
+                      <span className="chat-timestamp">{chat.timestamp}</span>
+                    </button>
+                    <button
+                      className="delete-chat-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteChat(chat._id || chat.id);
+                      }}
+                      title="Delete chat"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -115,7 +157,7 @@ const ChatSidebar = ({ isOpen, onClose, previousChats, onNewChat, onChatSelect, 
         </div>
 
         <div className="sidebar-footer">
-          <button className="sidebar-btn" onClick={toggleTheme}>
+          <button className="sidebar-btn" onClick={handleToggleTheme}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {theme === 'dark' ? (
                 <circle cx="12" cy="12" r="5"></circle>

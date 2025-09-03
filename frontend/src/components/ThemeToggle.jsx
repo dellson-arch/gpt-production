@@ -1,12 +1,18 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { selectIsDark, toggleTheme } from '../store/slices/themeSlice';
 
 const ThemeToggle = ({ className = '' }) => {
-  const { toggleTheme, isDark } = useTheme();
+  const dispatch = useAppDispatch();
+  const isDark = useAppSelector(selectIsDark);
+
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
+  };
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleToggleTheme}
       className={`theme-toggle ${className}`}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
       title={`Switch to ${isDark ? 'light' : 'dark'} theme`}

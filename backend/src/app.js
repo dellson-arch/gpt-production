@@ -8,7 +8,6 @@ const chatRoutes = require('../src/routes/chat.routes')
 
 const app = express()
 
-
 /* Middlewares */
 app.use(cors({
     origin : 'http://localhost:5173',

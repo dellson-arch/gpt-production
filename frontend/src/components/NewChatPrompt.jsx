@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useAppSelector } from '../store/hooks';
+import { selectTheme } from '../store/slices/themeSlice';
 
 const NewChatPrompt = ({ isOpen, onClose, onCreateChat }) => {
-  const { theme } = useTheme();
+  const theme = useAppSelector(selectTheme);
   const [prompt, setPrompt] = useState('');
 
   const handleSubmit = (e) => {

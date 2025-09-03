@@ -6,34 +6,66 @@ const aiService = require('../services/ai.service')
 const messageModel = require('../models/message.model')
 const {createMemory , queryMemory} = require('../services/vector.service')
 function initSocketServer(httpServer){
-    const io = new Server(httpServer, {})
+    const io = new Server(httpServer, {
+        cors:{
+            origin: "http://localhost:5173", // Match the main app's CORS origin
+            allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+            credentials: true,
+            methods: ["GET", "POST", "OPTIONS"]
+        }
+    })
   
     /* middleware */
     io.use(async(socket , next)=>{
     
+    console.log('Socket connection attempt from:', socket.handshake.headers.origin);
+    console.log('Socket headers:', socket.handshake.headers);
+    
     const cookies = cookie.parse(socket.handshake.headers?.cookie || '')
+    console.log('Cookies received:', cookies);
 
     if (!cookies.token) {
-    return(new Error("Authentication Error: No token provided"));
+        console.log('No token provided in cookies');
+        return next(new Error("Authentication Error: No token provided"));
     } 
 
     try {
         const decoded = jwt.verify(cookies.token, process.env.JWT_SECRET)
         const user = await userModel.findById(decoded.id)
         
+        if (!user) {
+            console.log('User not found for token');
+            return next(new Error("Authentication Error: User not found"));
+        }
+        
         socket.user = user
+        console.log('Socket authenticated for user:', user._id);
         next()
 
     } catch (error) {
+        console.log('Token verification failed:', error.message);
         next(new Error("Authentication Error: Invalid token"));
     }
 
     })
     io.on('connection', (socket) => {
-
+     console.log("Client connected successfully:", socket.user._id);
+     
+     // Handle socket errors
+     socket.on('error', (error) => {
+         console.error('Socket error:', error);
+     });
+     
+     socket.on('disconnect', (reason) => {
+         console.log('Client disconnected:', socket.user._id, 'Reason:', reason);
+     });
        socket.on("ai-message" , async(messagePayload)=>{
-
-        console.log(messagePayload)
+        try {
+            console.log('Processing AI message:', messagePayload);
+            
+            if (!messagePayload || !messagePayload.message || !messagePayload.chat) {
+                throw new Error('Invalid message payload');
+            }
         
 
 
@@ -156,7 +188,19 @@ function initSocketServer(httpServer){
             }
 
         })
-
+        
+        console.log('AI message processed successfully');
+        
+        } catch (error) {
+            console.error('Error processing AI message:', error);
+            
+            // Send error response to client
+            socket.emit('ai-response', {
+                content: `Sorry, there was an error processing your message: ${error.message}`,
+                chat: messagePayload.chat,
+                error: true
+            });
+        }
        })
 
     })
