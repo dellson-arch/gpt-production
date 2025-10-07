@@ -8,7 +8,7 @@ const {createMemory , queryMemory} = require('../services/vector.service')
 function initSocketServer(httpServer){
     const io = new Server(httpServer, {
         cors:{
-            origin: "http://localhost:5173", // Match the main app's CORS origin
+            origin: process.env.FRONTEND_URL || "http://localhost:5173", // Use FRONTEND_URL in production
             allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
             credentials: true,
             methods: ["GET", "POST", "OPTIONS"]

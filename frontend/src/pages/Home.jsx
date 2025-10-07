@@ -39,16 +39,18 @@ const Home = () => {
   const [socketStatus, setSocketStatus] = useState('connecting');
   const messagesContainerRef = useRef(null);
   const [socket, setSocket] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || API_BASE;
 
   // Initialize socket connection with better error handling
   useEffect(() => {
     const initializeSocket = async () => {
       if (!socket) {
-        console.log('Initializing socket connection to http://localhost:3000');
+        console.log('Initializing socket connection to', SOCKET_URL);
         
-        // First check if backend is accessible
-        try {
-          const response = await fetch('http://localhost:3000/api/chat/', {
+            // First check if backend is accessible
+            try {
+              const response = await fetch(`${API_BASE}/api/chat/`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -65,7 +67,7 @@ const Home = () => {
           console.log('Backend health check failed:', error.message);
         }
         
-        const tempSocket = io('http://localhost:3000', {
+        const tempSocket = io(SOCKET_URL, {
           withCredentials: true,
           timeout: 20000,
           reconnection: true,
@@ -209,9 +211,9 @@ const Home = () => {
     // If no current chat, create one first
     if (!currentChatId) {
       console.log('No current chat ID, creating new chat...');
-      try {
+        try {
         // Create a new chat through the backend API
-        const response = await axios.post('http://localhost:3000/api/chat/', {
+        const response = await axios.post(`${API_BASE}/api/chat/`, {
           title: message.substring(0, 50) + '...'
         }, {
           withCredentials: true
@@ -317,8 +319,8 @@ const Home = () => {
 
   const handleNewChat = async() => {
     console.log('handleNewChat called');
-    try {
-      const response = await axios.post('http://localhost:3000/api/chat/', {
+      try {
+        const response = await axios.post(`${API_BASE}/api/chat/`, {
         title: "New Chat"
       }, {
         withCredentials: true
@@ -352,7 +354,7 @@ const Home = () => {
   useEffect(() => {
     const loadChats = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/chat/', {
+          const response = await axios.get(`${API_BASE}/api/chat/`, {
           withCredentials: true
         });
         console.log('Loaded chats from backend:', response.data);
@@ -382,7 +384,7 @@ const Home = () => {
     if (prompt) {
       try {
         // Create a new chat through the backend API
-        const response = await axios.post('http://localhost:3000/api/chat/', {
+        const response = await axios.post(`${API_BASE}/api/chat/`, {
           title: prompt.substring(0, 50) + '...'
         }, {
           withCredentials: true
@@ -430,7 +432,7 @@ const Home = () => {
     
     // Load messages for the selected chat
     try {
-      const response = await axios.get(`http://localhost:3000/api/chat/${chatId}/messages`, {
+      const response = await axios.get(`${API_BASE}/api/chat/${chatId}/messages`, {
         withCredentials: true
       });
       
@@ -465,7 +467,7 @@ const Home = () => {
   const handleDeleteChat = async (chatId) => {
     console.log('handleDeleteChat called for chatId:', chatId);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/chat/${chatId}`, {
+      const response = await axios.delete(`${API_BASE}/api/chat/${chatId}`, {
         withCredentials: true
       });
       console.log('Chat deleted from backend:', response.data);

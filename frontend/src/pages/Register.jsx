@@ -48,7 +48,8 @@ const Register = () => {
     }
     
     console.log('Registration attempt:', formData);
-    axios.post('http://localhost:3000/api/auth/register', {
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    axios.post(`${API_BASE}/api/auth/register`, {
       email: formData.email,
       fullname: {
         firstname: formData.firstname,

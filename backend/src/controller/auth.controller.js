@@ -26,7 +26,12 @@ async function registerUser(req,res){
 
  const token = jwt.sign({id:user._id}, process.env.JWT_SECRET)
 
- res.cookie('token' , token)
+ res.cookie('token', token, {
+     httpOnly: true,
+     secure: process.env.NODE_ENV === 'production',
+     sameSite: 'none',
+     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+ })
 
  res.status(201).json({
     message:"user registered sucessfully",
@@ -56,9 +61,14 @@ async function loginUser(req,res){
             message: "invalid password"
         })
    }
-   const token = jwt.sign({id : user._id} , process.env.JWT_SECRET)
+     const token = jwt.sign({id : user._id} , process.env.JWT_SECRET)
 
-   res.cookie("token" , token)
+     res.cookie("token", token, {
+         httpOnly: true,
+         secure: process.env.NODE_ENV === 'production',
+         sameSite: 'none',
+         maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+     })
 
    return res.status(200).json({
     message:"user logged in sucessfully",

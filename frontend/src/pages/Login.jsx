@@ -21,7 +21,8 @@ const Login = () => {
     e.preventDefault();
     // TODO: Implement login logic
     console.log('Login attempt:', formData);
-    axios.post('http://localhost:3000/api/auth/login', {
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    axios.post(`${API_BASE}/api/auth/login`, {
       email : formData.email,
       password : formData.password
     },
