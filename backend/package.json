@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build:frontend": "cd ../frontend && npm install && npm run build",
+    "start": "npm run build:frontend && node server.js",
     "dev": "npx nodemon server.js"
   },
   "keywords": [],
