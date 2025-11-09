@@ -7,12 +7,12 @@ const messageModel = require('../models/message.model')
 const {createMemory , queryMemory} = require('../services/vector.service')
 function initSocketServer(httpServer){
     const io = new Server(httpServer, {
-        cors:{
-            origin: process.env.FRONTEND_URL || "http://localhost:5173", // Use FRONTEND_URL in production
-            allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-            credentials: true,
-            methods: ["GET", "POST", "OPTIONS"]
-        }
+        // cors:{
+        //     origin: process.env.FRONTEND_URL || "http://localhost:5173", // Use FRONTEND_URL in production
+        //     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+        //     credentials: true,
+        //     methods: ["GET", "POST", "OPTIONS"]
+        // }
     })
   
     /* middleware */

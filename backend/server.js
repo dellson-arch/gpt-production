@@ -1,21 +1,11 @@
-require('dotenv').config()
-const app = require('./src/app')
-const connectDb = require('./src/db/db')
-const initSocketServer = require('./src/sockets/socket.server')
-const httpServer = require('http').createServer(app)
+require('dotenv').config();
+const app = require('./src/app');
+const connectDB = require('./src/db/db');
+const initSocketServer = require('./src/sockets/socket.server');
+const httpServer = require('http').createServer(app)    ;
 
-connectDb()
-try {
-    console.log('Calling initSocketServer...')
-    initSocketServer(httpServer)
-    console.log('initSocketServer completed')
-} catch (err) {
-    console.error('Error during initSocketServer:', err)
-    process.exit(1)
-}
-
-const PORT = process.env.PORT || 3000;
-
-httpServer.listen(PORT, () => {
-    console.log(`server is running on port ${PORT}`);
-});
+connectDB();
+initSocketServer(httpServer)
+httpServer.listen(3000 , ()=>{
+    console.log("Server is running on port 3000");
+})
